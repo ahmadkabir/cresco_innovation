@@ -3,13 +3,12 @@ import {
   ArrowUpRight,
   Facebook,
   Instagram,
-  Linkedin,
   Mail,
   MapPin,
   Phone,
-  Twitter,
 } from 'lucide-react'
 import Logo from '../ui/Logo'
+import { TikTokIcon } from '../ui/icons'
 import { company, hasContact } from '../../data/company'
 import { services } from '../../data/services'
 
@@ -23,10 +22,9 @@ const quickLinks = [
 ]
 
 const socials = [
-  { label: 'LinkedIn', href: company.social.linkedin, Icon: Linkedin },
   { label: 'Instagram', href: company.social.instagram, Icon: Instagram },
+  { label: 'TikTok', href: company.social.tiktok, Icon: TikTokIcon },
   { label: 'Facebook', href: company.social.facebook, Icon: Facebook },
-  { label: 'X', href: company.social.x, Icon: Twitter },
 ].filter((social) => hasContact(social.href))
 
 const whatsappLink = hasContact(company.contact.whatsapp)
@@ -124,14 +122,21 @@ export default function Footer() {
             </h3>
             <ul className="mt-5 space-y-4 text-[13.5px] text-white/65">
               <li className="flex items-start gap-3">
-                <Phone size={15} className="mt-0.5 shrink-0 text-brand-mint/70" aria-hidden="true" />
-                {hasContact(company.contact.phone) ? (
-                  <a href={`tel:${company.contact.phone}`} className="transition hover:text-white">
-                    {company.contact.phone}
-                  </a>
-                ) : (
-                  <span>Phone available on request</span>
-                )}
+                <Phone size={15} className="mt-1 shrink-0 text-brand-mint/70" aria-hidden="true" />
+                <span className="flex flex-col gap-2.5">
+                  {company.contact.phones.map((phone) => (
+                    <a
+                      key={phone.tel}
+                      href={`tel:${phone.tel}`}
+                      className="block transition hover:text-white"
+                    >
+                      {phone.value}
+                      <span className="mt-0.5 block text-[10.5px] uppercase tracking-[0.1em] text-white/35">
+                        {phone.note}
+                      </span>
+                    </a>
+                  ))}
+                </span>
               </li>
               <li className="flex items-start gap-3">
                 <Mail size={15} className="mt-0.5 shrink-0 text-brand-mint/70" aria-hidden="true" />
@@ -149,7 +154,17 @@ export default function Footer() {
               <li className="flex items-start gap-3">
                 <MapPin size={15} className="mt-0.5 shrink-0 text-brand-mint/70" aria-hidden="true" />
                 {hasContact(company.contact.address) ? (
-                  <span>{company.contact.address}</span>
+                  <a
+                    href={`https://www.google.com/maps/dir/?api=1&destination=${company.contact.map.lat},${company.contact.map.lng}`}
+                    target="_blank"
+                    rel="noreferrer noopener"
+                    className="transition hover:text-white"
+                  >
+                    {company.contact.address}
+                    <span className="mt-0.5 block text-[10.5px] uppercase tracking-[0.1em] text-white/35">
+                      Get directions
+                    </span>
+                  </a>
                 ) : (
                   <span>Office address available on request</span>
                 )}

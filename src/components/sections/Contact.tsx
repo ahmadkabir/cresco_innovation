@@ -1,19 +1,20 @@
 import { useState, type FormEvent } from 'react'
 import {
   AlertCircle,
+  ArrowUpRight,
   CheckCircle2,
   ChevronDown,
   Facebook,
   Instagram,
-  Linkedin,
   Mail,
   MapPin,
   MessageCircle,
+  Navigation,
   Phone,
   Send,
-  Twitter,
 } from 'lucide-react'
 import Reveal from '../ui/Reveal'
+import { TikTokIcon } from '../ui/icons'
 import SectionHeading from '../ui/SectionHeading'
 import Button from '../ui/Button'
 import { company, hasContact } from '../../data/company'
@@ -40,15 +41,19 @@ type Status = 'idle' | 'sending' | 'success' | 'error'
 const emailPattern = /^[^\s@]+@[^\s@]+\.[a-z]{2,}$/i
 
 const socials = [
-  { label: 'LinkedIn', href: company.social.linkedin, Icon: Linkedin },
   { label: 'Instagram', href: company.social.instagram, Icon: Instagram },
+  { label: 'TikTok', href: company.social.tiktok, Icon: TikTokIcon },
   { label: 'Facebook', href: company.social.facebook, Icon: Facebook },
-  { label: 'X', href: company.social.x, Icon: Twitter },
 ].filter((social) => hasContact(social.href))
 
 const whatsappLink = hasContact(company.contact.whatsapp)
   ? `https://wa.me/${company.contact.whatsapp.replace(/[^\d]/g, '')}`
   : ''
+
+const mapPoint = `${company.contact.map.lat},${company.contact.map.lng}`
+const mapsPlaceUrl = `https://www.google.com/maps/search/?api=1&query=${mapPoint}`
+const directionsUrl = `https://www.google.com/maps/dir/?api=1&destination=${mapPoint}`
+const mapEmbedUrl = `https://maps.google.com/maps?q=${mapPoint}&z=${company.contact.map.zoom}&hl=en&output=embed`
 
 export default function Contact() {
   const [values, setValues] = useState<FormValues>(initialValues)
@@ -104,31 +109,49 @@ export default function Contact() {
   const details = [
     {
       icon: Phone,
-      label: 'Phone',
-      value: hasContact(company.contact.phone) ? company.contact.phone : 'Available on request',
-      href: hasContact(company.contact.phone) ? `tel:${company.contact.phone}` : '',
-      note: 'Speak directly with our team',
-    },
-    {
-      icon: Mail,
-      label: 'Email',
-      value: hasContact(company.contact.email) ? company.contact.email : 'Available on request',
-      href: hasContact(company.contact.email) ? `mailto:${company.contact.email}` : '',
-      note: 'Send your requirement in writing',
+      label: 'Call us',
+      note: 'Nigeria & China lines',
+      lines: company.contact.phones.map((phone) => ({
+        value: phone.value,
+        note: phone.note,
+        href: `tel:${phone.tel}`,
+      })),
     },
     {
       icon: MessageCircle,
       label: 'WhatsApp',
-      value: hasContact(company.contact.whatsapp) ? company.contact.whatsapp : 'Available on request',
-      href: whatsappLink,
       note: 'Quick questions and updates',
+      lines: [
+        {
+          value: company.contact.whatsappDisplay,
+          note: 'Nigeria · chat with our team',
+          href: whatsappLink,
+        },
+      ],
+    },
+    {
+      icon: Mail,
+      label: 'Email',
+      note: 'Send your requirement in writing',
+      lines: [
+        {
+          value: hasContact(company.contact.email) ? company.contact.email : 'Available on request',
+          note: '',
+          href: hasContact(company.contact.email) ? `mailto:${company.contact.email}` : '',
+        },
+      ],
     },
     {
       icon: MapPin,
       label: 'Office',
-      value: hasContact(company.contact.address) ? company.contact.address : 'Available on request',
-      href: '',
       note: 'Meetings by appointment',
+      lines: [
+        {
+          value: company.contact.address,
+          note: 'Get directions in Google Maps',
+          href: directionsUrl,
+        },
+      ],
     },
   ]
 
@@ -154,9 +177,9 @@ export default function Contact() {
           </Reveal>
 
           <div className="mt-9 grid gap-3.5 sm:grid-cols-2">
-            {details.map(({ icon: Icon, label, value, href, note }, index) => (
+            {details.map(({ icon: Icon, label, note, lines }, index) => (
               <Reveal key={label} delay={0.05 + index * 0.04}>
-                <div className="h-full rounded-2xl border border-ink/[0.07] bg-canvas p-5 transition duration-300 hover:border-brand-green/25 hover:bg-white hover:shadow-soft">
+                <div className="flex h-full flex-col rounded-2xl border border-ink/[0.07] bg-canvas p-5 transition duration-300 hover:border-brand-green/25 hover:bg-white hover:shadow-soft">
                   <div className="flex items-center gap-2.5">
                     <span className="grid h-8 w-8 place-items-center rounded-lg bg-white text-brand-green shadow-[0_1px_2px_rgba(23,43,37,0.06)]">
                       <Icon size={15} strokeWidth={1.9} aria-hidden="true" />
@@ -165,19 +188,30 @@ export default function Contact() {
                       {label}
                     </span>
                   </div>
-                  {href ? (
-                    <a
-                      href={href}
-                      target={href.startsWith('http') ? '_blank' : undefined}
-                      rel={href.startsWith('http') ? 'noreferrer noopener' : undefined}
-                      className="mt-3 block break-words text-[13.5px] font-bold text-ink transition hover:text-brand-deep"
-                    >
-                      {value}
-                    </a>
-                  ) : (
-                    <p className="mt-3 text-[13.5px] font-bold text-ink/80">{value}</p>
-                  )}
-                  <p className="mt-1 text-[11.5px] text-muted">{note}</p>
+
+                  <div className="mt-3 space-y-2.5">
+                    {lines.map((line) => (
+                      <div key={`${label}-${line.value}`}>
+                        {line.href ? (
+                          <a
+                            href={line.href}
+                            target={line.href.startsWith('http') ? '_blank' : undefined}
+                            rel={line.href.startsWith('http') ? 'noreferrer noopener' : undefined}
+                            className="block break-words text-[13.5px] font-bold leading-snug text-ink transition hover:text-brand-deep"
+                          >
+                            {line.value}
+                          </a>
+                        ) : (
+                          <p className="break-words text-[13.5px] font-bold leading-snug text-ink/80">
+                            {line.value}
+                          </p>
+                        )}
+                        {line.note && <p className="mt-0.5 text-[11px] text-muted">{line.note}</p>}
+                      </div>
+                    ))}
+                  </div>
+
+                  <p className="mt-auto pt-3 text-[11.5px] text-muted">{note}</p>
                 </div>
               </Reveal>
             ))}
@@ -416,6 +450,54 @@ export default function Contact() {
                 </div>
               </form>
             )}
+          </div>
+        </Reveal>
+      </div>
+
+      <div className="shell relative mt-12 lg:mt-16">
+        <Reveal delay={0.08}>
+          <div className="overflow-hidden rounded-[2rem] border border-ink/[0.07] bg-white p-6 shadow-soft sm:p-8 lg:p-10">
+            <div className="grid gap-7 lg:grid-cols-[0.85fr_1.15fr] lg:items-center lg:gap-10">
+              <div>
+                <span className="text-[10.5px] font-bold uppercase tracking-[0.16em] text-brand-green">
+                  Find us
+                </span>
+                <h3 className="mt-3 text-xl font-bold tracking-[-0.02em] text-ink sm:text-2xl">
+                  Visit our office in Kano
+                </h3>
+                <p className="mt-3 flex items-start gap-2.5 text-[13.5px] leading-relaxed text-ink/75">
+                  <MapPin size={16} className="mt-0.5 shrink-0 text-brand-green" aria-hidden="true" />
+                  <span>{company.contact.address}</span>
+                </p>
+                <p className="mt-2.5 text-[12px] leading-relaxed text-muted">
+                  Gama C quarters, Nassarawa Local Government Area. Turn-by-turn directions open
+                  straight in Google Maps.
+                </p>
+                <div className="mt-6 flex flex-wrap gap-3">
+                  <Button href={directionsUrl} icon={<Navigation size={15} />}>
+                    Get directions
+                  </Button>
+                  <Button
+                    href={mapsPlaceUrl}
+                    variant="secondary"
+                    icon={<ArrowUpRight size={15} />}
+                  >
+                    Open in Maps
+                  </Button>
+                </div>
+              </div>
+
+              <div className="overflow-hidden rounded-2xl border border-ink/[0.07] bg-canvas">
+                <iframe
+                  title={`Google Map showing ${company.name} at ${company.contact.address}`}
+                  src={mapEmbedUrl}
+                  className="block h-[300px] w-full sm:h-[340px]"
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                  allowFullScreen
+                />
+              </div>
+            </div>
           </div>
         </Reveal>
       </div>

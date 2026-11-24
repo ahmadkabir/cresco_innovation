@@ -29,7 +29,7 @@ export default function CEOMessage() {
               <img
                 src={ceo.photo}
                 alt={`${ceo.name}, ${ceo.role} of ${company.name}`}
-                className="aspect-[4/5] w-full object-cover"
+                className="w-full object-cover"
                 loading="lazy"
               />
             ) : (
