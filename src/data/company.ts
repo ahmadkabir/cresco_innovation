@@ -28,7 +28,7 @@ export const company = {
       { value: '+234 803 895 8418', tel: '+2348038958418', note: 'Nigeria' },
       { value: '+86 131 0762 9565', tel: '+8613107629565', note: 'China · WeChat & WhatsApp' },
     ] as PhoneLine[],
-    email: '',
+    email: 'Crescoinnovation@gmail.com',
     address: 'No. 26 Gama C, Nassarawa Local Government, Kano State, Nigeria',
     /**
      * Mapped point for the Gama C quarters in Nassarawa LGA, Kano — the closest
@@ -40,8 +40,15 @@ export const company = {
       lng: 8.5919749,
       zoom: 16,
     },
-    /** Optional: a form endpoint (e.g. Formspree) that accepts JSON POSTs. */
-    formEndpoint: '',
+    /** Contact form endpoint. Web3Forms emails each submission to `email`. */
+    formEndpoint: 'https://api.web3forms.com/submit',
+    /**
+     * Web3Forms access key for the address above. Public by design (it ships
+     * in the built JavaScript) and only able to deliver to its own inbox.
+     * Paste the key Web3Forms emails you after entering that address at
+     * https://web3forms.com — without it the form cannot deliver enquiries.
+     */
+    formAccessKey: '',
   },
   social: {
     linkedin: '',

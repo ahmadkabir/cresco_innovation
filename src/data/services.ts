@@ -1,5 +1,6 @@
 import {
   Building2,
+  ClipboardCheck,
   Container,
   Cpu,
   Shirt,
@@ -32,6 +33,21 @@ export const services: Service[] = [
       'Price negotiation and quotations',
       'Sample coordination and approval',
       'Order follow-up and pre-shipment checks',
+    ],
+  },
+  {
+    slug: 'factory-visit-supplier-verification',
+    title: 'Factory Visit & Supplier Verification',
+    short:
+      'On-the-ground checks on factories and suppliers before you commit to an order.',
+    description:
+      'Before you place an order or send payment, Cresco can visit and assess the factory or supplier in person. We confirm that the business is real, that the manufacturer is who they claim to be, and that what they produce matches the quality and specification you have been promised.',
+    icon: ClipboardCheck,
+    outcomes: [
+      'Factory visits and on-site assessments',
+      'Supplier background checks and business verification',
+      'Manufacturer identification and assessment',
+      'Product quality assessment and inspection coordination',
     ],
   },
   {

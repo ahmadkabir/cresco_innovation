@@ -25,7 +25,7 @@ export default function Services() {
                   <span className="text-brand-green">a delivered order.</span>
                 </>
               }
-              description="Seven focused service areas, built around real procurement, trade and technology needs — delivered with clear communication at every stage."
+              description="Eight focused service areas, built around real procurement, trade and technology needs — delivered with clear communication at every stage."
             />
           </Reveal>
           <Reveal delay={0.1} className="shrink-0">

@@ -9,9 +9,10 @@ type Props = {
 
 /**
  * Renders the official logo from /public/logo.png (company.logo).
- * The artwork has a white background, so on dark surfaces (footer) it sits
- * on a white plate instead of being recoloured or distorted. Until the file
- * is supplied, an accurate wordmark fallback keeps every layout branded.
+ * The artwork is a horizontal lockup on a transparent background; on dark
+ * surfaces (footer) it still sits on a white plate so the green and teal
+ * lettering keeps its contrast. If the file cannot load, an accurate
+ * wordmark fallback keeps every layout branded.
  */
 export default function Logo({ variant = 'dark', className = '', showWordmark = true }: Props) {
   const [imageFailed, setImageFailed] = useState(false)

@@ -18,7 +18,7 @@ export default function ServicesPage() {
             Sourcing, procurement and <span className="text-brand-green">business solutions.</span>
           </>
         }
-        description="Seven service areas covering the journey from identifying a supplier to receiving goods — plus the technology and advisory support that helps a business grow."
+        description="Eight service areas covering the journey from identifying a supplier to receiving goods — plus the technology and advisory support that helps a business grow."
       >
         <div className="flex flex-wrap gap-3">
           <Button to="/contact" icon={<ArrowRight size={16} />}>

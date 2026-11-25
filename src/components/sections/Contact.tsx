@@ -88,21 +88,44 @@ export default function Contact() {
     }
 
     setStatus('sending')
+    const controller = new AbortController()
+    const timeout = setTimeout(() => controller.abort(), 15000)
     try {
-      if (hasContact(company.contact.formEndpoint)) {
-        const response = await fetch(company.contact.formEndpoint, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-          body: JSON.stringify(values),
-        })
-        if (!response.ok) throw new Error(`Submission failed: ${response.status}`)
-      } else {
-        await new Promise((resolve) => setTimeout(resolve, 700))
+      if (
+        !hasContact(company.contact.formEndpoint) ||
+        !hasContact(company.contact.formAccessKey)
+      ) {
+        throw new Error('Enquiry delivery is not configured.')
+      }
+
+      const response = await fetch(company.contact.formEndpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        signal: controller.signal,
+        body: JSON.stringify({
+          access_key: company.contact.formAccessKey,
+          subject: `New website enquiry — ${values.name}`,
+          from_name: company.name,
+          replyto: values.email,
+          ...values,
+        }),
+      })
+
+      // The service can answer 200 and still refuse, so trust its `success`
+      // flag rather than the HTTP status alone.
+      const result = (await response.json().catch(() => null)) as {
+        success?: boolean
+      } | null
+
+      if (!response.ok || !result?.success) {
+        throw new Error(`Submission failed: ${response.status}`)
       }
       setStatus('success')
       setValues(initialValues)
     } catch {
       setStatus('error')
+    } finally {
+      clearTimeout(timeout)
     }
   }
 
